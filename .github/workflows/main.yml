@@ -1,0 +1,40 @@
+name: Build jar file for Athena Matlab communication
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Set up Maven
+      uses: s4u/setup-maven-action@v1.2.1
+      with:
+        java-version: '11'
+
+    - name: Build with Maven
+      run: |
+        cd Software/Java
+        mvn clean package
+
+    - name: Upload Maven artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: maven-artifacts
+        path: Software/Java/target/*.jar
